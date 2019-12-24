@@ -16,7 +16,6 @@
 #include "ibtk/IBTK_MPI.h"
 #include "ibtk/app_namespaces.h"
 
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Utilities.h"
 
 #include <string>
@@ -42,9 +41,9 @@ IBTK_MPI::comm
 IBTK_MPI::getSAMRAIWorld()
 {
 #if SAMRAI_VERSION_MAJOR == 2
-    return SAMRAI_MPI::commWorld;
+    return IBTK_MPI::commWorld;
 #else
-    return SAMRAI_MPI::getSAMRAIWorld()
+    return IBTK_MPI::getSAMRAIWorld()
 #endif
 }
 
@@ -231,6 +230,19 @@ IBTK_MPI::allGather(T x_in, T* x_out, IBTK_MPI::comm communicator)
 {
     MPI_Allgather(&x_in, 1, mpi_type_id(x_in), x_out, 1, mpi_type_id(x_in), communicator);
 } // allGather
+
+int
+SAMRAI_MPI::getTreeDepth()
+{
+    int depth = 0;
+    const int nnodes = getNodes();
+    while ((1 << depth) < nnodes)
+    {
+        depth++;
+    }
+    return (depth);
+}
+
 //////////////////////////////////////  PRIVATE  ///////////////////////////////////////////////////
 
 void
