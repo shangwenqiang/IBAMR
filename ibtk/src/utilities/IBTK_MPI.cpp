@@ -231,18 +231,6 @@ IBTK_MPI::allGather(T x_in, T* x_out, IBTK_MPI::comm communicator)
     MPI_Allgather(&x_in, 1, mpi_type_id(x_in), x_out, 1, mpi_type_id(x_in), communicator);
 } // allGather
 
-int
-SAMRAI_MPI::getTreeDepth()
-{
-    int depth = 0;
-    const int nnodes = getNodes();
-    while ((1 << depth) < nnodes)
-    {
-        depth++;
-    }
-    return (depth);
-}
-
 //////////////////////////////////////  PRIVATE  ///////////////////////////////////////////////////
 
 void

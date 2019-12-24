@@ -295,8 +295,6 @@ struct IBTK_MPI
 
     //@}
 
-    int getTreeDepth();
-
 private:
     /**
      * Performs common functions needed by some of the allToAll methods.
