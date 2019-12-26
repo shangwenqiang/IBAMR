@@ -50,8 +50,8 @@ int
 main(int argc, char* argv[])
 {
     // Initialize MPI and SAMRAI.
-    IBTK_MPI::init(&argc, &argv);
-    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+    SAMRAI_MPI::init(&argc, &argv);
+    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     std::ofstream output("output");
@@ -232,5 +232,5 @@ main(int argc, char* argv[])
     } // cleanup dynamically allocated objects prior to shutdown
 
     SAMRAIManager::shutdown();
-    IBTK_MPI::finalize();
+    SAMRAI_MPI::finalize();
 } // main

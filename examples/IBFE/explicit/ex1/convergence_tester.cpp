@@ -62,8 +62,9 @@ main(int argc, char* argv[])
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
     {
-        IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+        SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
         IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+        SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
         tbox::SAMRAIManager::startup();
 
         if (argc != 2)

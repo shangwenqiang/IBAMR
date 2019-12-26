@@ -50,7 +50,8 @@ main(int argc, char* argv[])
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
     IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
-    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
+    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown

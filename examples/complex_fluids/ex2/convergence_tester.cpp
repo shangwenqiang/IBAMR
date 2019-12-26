@@ -45,7 +45,8 @@ main(int argc, char* argv[])
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
     IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
-    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
+    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // Parse command line options, set some standard options from the input
@@ -542,6 +543,6 @@ main(int argc, char* argv[])
     }
 
     SAMRAIManager::shutdown();
-    IBTK_MPI::finalize();
+    SAMRAI_MPI::finalize();
     return 0;
 } // main

@@ -73,7 +73,8 @@ main(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
     IBTK_MPI::setCommunicator(MPI_COMM_WORLD);
-    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+    SAMRAI_MPI::setCommunicator(MPI_COMM_WORLD);
+    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     Pointer<AppInitializer> app_initializer = new AppInitializer(argc, argv, "IB.log");

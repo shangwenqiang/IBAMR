@@ -139,7 +139,8 @@ main(int argc, char** argv)
 {
     PetscInitialize(&argc, &argv, NULL, NULL);
     IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
-    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
+    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     const int rank = IBTK_MPI::getRank();

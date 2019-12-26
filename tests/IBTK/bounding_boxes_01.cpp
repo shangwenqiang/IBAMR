@@ -177,7 +177,8 @@ main(int argc, char** argv)
     std::ofstream out("output");
 
     IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
-    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
+    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // test 2D
