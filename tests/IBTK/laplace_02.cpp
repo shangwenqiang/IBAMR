@@ -49,8 +49,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown
@@ -184,7 +184,7 @@ main(int argc, char* argv[])
         const double l2_norm = e_vec.L2Norm();
         const double l1_norm = e_vec.L1Norm();
 
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             std::ofstream out("output");
             out << "|e|_oo = " << max_norm << "\n";

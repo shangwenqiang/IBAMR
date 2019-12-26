@@ -23,6 +23,7 @@
 #include "ibtk/FEDataInterpolation.h"
 #include "ibtk/FEDataManager.h"
 #include "ibtk/IBTK_CHKERRQ.h"
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/IndexUtilities.h"
 #include "ibtk/LEInteractor.h"
 #include "ibtk/RobinPhysBdryPatchStrategy.h"
@@ -58,7 +59,6 @@
 #include "tbox/PIO.h"
 #include "tbox/Pointer.h"
 #include "tbox/RestartManager.h"
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Utilities.h"
 
 #include "libmesh/boundary_info.h"
@@ -1586,8 +1586,8 @@ IBFEMethod::addWorkloadEstimate(Pointer<PatchHierarchy<NDIM> > hierarchy, const 
 
     if (d_do_log)
     {
-        const int n_processes = SAMRAI::tbox::SAMRAI_MPI::getNodes();
-        const int current_rank = SAMRAI::tbox::SAMRAI_MPI::getRank();
+        const int n_processes = IBTK_MPI::getNodes();
+        const int current_rank = IBTK_MPI::getRank();
 
         std::vector<double> workload_per_processor(n_processes);
         HierarchyCellDataOpsReal<NDIM, double> hier_cc_data_ops(hierarchy);
@@ -1600,7 +1600,7 @@ IBFEMethod::addWorkloadEstimate(Pointer<PatchHierarchy<NDIM> > hierarchy, const 
                                  workload_per_processor.size(),
                                  MPI_DOUBLE,
                                  MPI_SUM,
-                                 SAMRAI::tbox::SAMRAI_MPI::commWorld);
+                                 IBTK_MPI::getCommunicator());
         TBOX_ASSERT(ierr == 0);
         if (current_rank == 0)
         {
@@ -1626,7 +1626,7 @@ IBFEMethod::addWorkloadEstimate(Pointer<PatchHierarchy<NDIM> > hierarchy, const 
                              dofs_per_processor.size(),
                              MPI_UNSIGNED_LONG,
                              MPI_SUM,
-                             SAMRAI::tbox::SAMRAI_MPI::commWorld);
+                             IBTK_MPI::getCommunicator());
         TBOX_ASSERT(ierr == 0);
         if (current_rank == 0)
         {
@@ -3469,8 +3469,8 @@ IBFEMethod::commonConstructor(const std::string& object_name,
             mesh_has_first_order_elems = mesh_has_first_order_elems || elem->default_order() == FIRST;
             mesh_has_second_order_elems = mesh_has_second_order_elems || elem->default_order() == SECOND;
         }
-        mesh_has_first_order_elems = SAMRAI_MPI::maxReduction(mesh_has_first_order_elems);
-        mesh_has_second_order_elems = SAMRAI_MPI::maxReduction(mesh_has_second_order_elems);
+        mesh_has_first_order_elems = IBTK_MPI::maxReduction(mesh_has_first_order_elems);
+        mesh_has_second_order_elems = IBTK_MPI::maxReduction(mesh_has_second_order_elems);
         if ((mesh_has_first_order_elems && mesh_has_second_order_elems) ||
             (!mesh_has_first_order_elems && !mesh_has_second_order_elems))
         {

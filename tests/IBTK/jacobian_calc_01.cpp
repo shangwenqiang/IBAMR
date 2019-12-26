@@ -219,8 +219,8 @@ int
 main(int argc, char** argv)
 {
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     {

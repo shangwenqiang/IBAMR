@@ -123,7 +123,7 @@ IrregularWaveBcCoef::IrregularWaveBcCoef(std::string object_name,
         }
     }
 
-    if (!SAMRAI_MPI::getRank())
+    if (!IBTK_MPI::getRank())
     {
         std::ofstream wave_stream;
         wave_stream.open("irregular_wave.txt", std::fstream::out);

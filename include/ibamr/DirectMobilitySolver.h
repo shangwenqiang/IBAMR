@@ -17,6 +17,8 @@
 /////////////////////////////// INCLUDES /////////////////////////////////////
 #include "ibamr/ibamr_enums.h"
 
+#include "ibtk/IBTK_MPI.h"
+
 #include "tbox/Database.h"
 #include "tbox/DescribedClass.h"
 #include "tbox/Pointer.h"

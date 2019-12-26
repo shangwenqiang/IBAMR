@@ -482,8 +482,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown
@@ -683,7 +683,7 @@ main(int argc, char* argv[])
         // Get a sense of Lagrangian nodes distribution among processors
         PetscSynchronizedPrintf(PETSC_COMM_WORLD,
                                 "Local Lagrangian nodes on proc [%d] are : %d\n",
-                                SAMRAI_MPI::getRank(),
+                                IBTK_MPI::getRank(),
                                 lag_data_manager->getNumberOfLocalNodes(finest_ln));
         PetscSynchronizedFlush(PETSC_COMM_WORLD, PETSC_STDOUT);
 
@@ -930,7 +930,7 @@ buildSAJCoarsestFromSAMRAIOperators(Mat& SAJ_coarse,
         restriction_coarsen_algorithm->createSchedule(coarsest_level, finest_level);
 
     // Get DOFs info at the coarse and fine levels.
-    const int mpi_rank = SAMRAI_MPI::getRank();
+    const int mpi_rank = IBTK_MPI::getRank();
     const int n_local_coarsest = num_dofs_per_proc[coarsest_ln][mpi_rank];
     const int i_lower_coarsest =
         std::accumulate(num_dofs_per_proc[coarsest_ln].begin(), num_dofs_per_proc[coarsest_ln].begin() + mpi_rank, 0);

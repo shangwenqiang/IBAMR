@@ -123,8 +123,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
     SAMRAIManager::setMaxNumberPatchDataEntries(2054);
 
@@ -304,7 +304,7 @@ main(int argc, char* argv[])
             direct_solvers->registerStructIDsWithMobilityMat(mat_name1, struct_ids1);
 
             int next_proc = 0;
-            if (SAMRAI_MPI::getNodes() > 1) next_proc = 1;
+            if (IBTK_MPI::getNodes() > 1) next_proc = 1;
             direct_solvers->registerMobilityMat(
                 mat_name2, prototype_structs2, EMPIRICAL, std::make_pair(LAPACK_SVD, LAPACK_SVD), next_proc);
             direct_solvers->registerStructIDsWithMobilityMat(mat_name2, struct_ids2);

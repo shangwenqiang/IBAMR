@@ -41,7 +41,7 @@ IBTK_MPI::comm
 IBTK_MPI::getSAMRAIWorld()
 {
 #if SAMRAI_VERSION_MAJOR == 2
-    return IBTK_MPI::commWorld;
+    return IBTK_MPI::getCommunicator();
 #else
     return IBTK_MPI::getSAMRAIWorld()
 #endif

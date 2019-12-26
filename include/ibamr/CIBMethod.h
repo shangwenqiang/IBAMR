@@ -19,6 +19,7 @@
 #include "ibamr/CIBStrategy.h"
 #include "ibamr/IBMethod.h"
 
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/LData.h"
 #include "ibtk/LDataManager.h"
 #include "ibtk/ibtk_utilities.h"

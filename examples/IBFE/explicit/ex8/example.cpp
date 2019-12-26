@@ -287,7 +287,7 @@ compute_inflow_flux(const Pointer<PatchHierarchy<NDIM> > hierarchy, const int U_
             }
         }
     }
-    SAMRAI_MPI::sumReduction(&Q_in, 1);
+    IBTK_MPI::sumReduction(&Q_in, 1);
     return Q_in;
 }
 
@@ -316,8 +316,8 @@ main(int argc, char* argv[])
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    //  SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    //  IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown
@@ -647,8 +647,8 @@ main(int argc, char* argv[])
             time_integrator->advanceHierarchy(dt);
             loop_time += dt;
 
-            J_dil_min = SAMRAI_MPI::minReduction(J_dil_min);
-            J_dil_max = SAMRAI_MPI::maxReduction(J_dil_max);
+            J_dil_min = IBTK_MPI::minReduction(J_dil_min);
+            J_dil_max = IBTK_MPI::maxReduction(J_dil_max);
 
             pout << "J_min = " << J_dil_min << "\n"
                  << "J_max = " << J_dil_max << "\n";

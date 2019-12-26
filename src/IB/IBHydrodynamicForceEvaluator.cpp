@@ -189,7 +189,7 @@ IBHydrodynamicForceEvaluator::registerStructure(IBTK::Vector3d& box_X_lower,
     }
 
     // Set up the streams for printing drag and torque
-    if (SAMRAI_MPI::getRank() == 0)
+    if (IBTK_MPI::getRank() == 0)
     {
         const std::string strct_id_str = std::to_string(strct_id);
 
@@ -415,8 +415,8 @@ IBHydrodynamicForceEvaluator::computeLaggedMomentumIntegral(
             }
         }
 
-        SAMRAI_MPI::sumReduction(fobj.P_box_current.data(), 3);
-        SAMRAI_MPI::sumReduction(fobj.L_box_current.data(), 3);
+        IBTK_MPI::sumReduction(fobj.P_box_current.data(), 3);
+        IBTK_MPI::sumReduction(fobj.L_box_current.data(), 3);
     }
 
     return;
@@ -582,8 +582,8 @@ IBHydrodynamicForceEvaluator::computeHydrodynamicForce(int u_idx,
             }
         }
 
-        SAMRAI_MPI::sumReduction(fobj.P_box_new.data(), 3);
-        SAMRAI_MPI::sumReduction(fobj.L_box_new.data(), 3);
+        IBTK_MPI::sumReduction(fobj.P_box_new.data(), 3);
+        IBTK_MPI::sumReduction(fobj.L_box_new.data(), 3);
 
         // Compute surface integral term.
         IBTK::Vector3d trac, torque_trac;
@@ -740,8 +740,8 @@ IBHydrodynamicForceEvaluator::computeHydrodynamicForce(int u_idx,
                 }
             }
         }
-        SAMRAI_MPI::sumReduction(trac.data(), 3);
-        SAMRAI_MPI::sumReduction(torque_trac.data(), 3);
+        IBTK_MPI::sumReduction(trac.data(), 3);
+        IBTK_MPI::sumReduction(torque_trac.data(), 3);
 
         // Compute hydrodynamic force on the body : -integral_{box_new} (rho du/dt) + d/dt(rho u)_body + trac
         fobj.F_new = -(fobj.P_box_new - fobj.P_box_current) / dt + (fobj.P_new - fobj.P_current) / dt + trac;
@@ -763,7 +763,7 @@ IBHydrodynamicForceEvaluator::postprocessIntegrateData(double /*current_time*/, 
         IBHydrodynamicForceObject& force_obj = hydro_obj.second;
 
         // Output drag and torque to stream
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             *force_obj.drag_CV_stream << new_time << '\t' << force_obj.F_new(0) << '\t' << force_obj.F_new(1) << '\t'
                                       << force_obj.F_new(2) << std::endl;

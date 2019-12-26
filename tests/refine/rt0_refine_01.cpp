@@ -52,12 +52,12 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // this test only works in serial
-    TBOX_ASSERT(SAMRAI_MPI::getNodes() == 1);
+    TBOX_ASSERT(IBTK_MPI::getNodes() == 1);
 
     // prevent a warning about timer initializations
     TimerManager::createManager(nullptr);

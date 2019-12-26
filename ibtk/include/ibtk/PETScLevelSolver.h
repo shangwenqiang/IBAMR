@@ -16,6 +16,7 @@
 
 /////////////////////////////// INCLUDES /////////////////////////////////////
 
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/LinearSolver.h"
 #include "ibtk/ibtk_utilities.h"
 

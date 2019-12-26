@@ -30,6 +30,8 @@
 using namespace libMesh;
 
 // SAMRAI INCLUDES
+#include <ibtk/IBTK_MPI.h>
+
 #include <tbox/Database.h>
 #include <tbox/HDFDatabase.h>
 #include <tbox/InputDatabase.h>
@@ -38,7 +40,6 @@ using namespace libMesh;
 #include <tbox/PIO.h>
 #include <tbox/Pointer.h>
 #include <tbox/SAMRAIManager.h>
-#include <tbox/SAMRAI_MPI.h>
 #include <tbox/Utilities.h>
 
 #include <CartesianGridGeometry.h>
@@ -61,8 +62,8 @@ main(int argc, char* argv[])
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
     {
-        tbox::SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
-        tbox::SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
+        IBTK_MPI::setCallAbortInSerialInsteadOfExit();
+        IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
         tbox::SAMRAIManager::startup();
 
         if (argc != 2)
@@ -70,7 +71,7 @@ main(int argc, char* argv[])
             tbox::pout << "USAGE:  " << argv[0] << " <input filename>\n"
                        << "  options:\n"
                        << "  none at this time" << endl;
-            tbox::SAMRAI_MPI::abort();
+            IBTK_MPI::abort();
             return (-1);
         }
 
@@ -164,17 +165,17 @@ main(int argc, char* argv[])
         {
             char temp_buf[128];
 
-            sprintf(temp_buf, "%05d.samrai.%05d", coarse_iteration_num, tbox::SAMRAI_MPI::getRank());
+            sprintf(temp_buf, "%05d.samrai.%05d", coarse_iteration_num, IBTK_MPI::getRank());
             string coarse_file_name = coarse_hier_dump_dirname + "/" + "hier_data.";
             coarse_file_name += temp_buf;
 
-            sprintf(temp_buf, "%05d.samrai.%05d", fine_iteration_num, tbox::SAMRAI_MPI::getRank());
+            sprintf(temp_buf, "%05d.samrai.%05d", fine_iteration_num, IBTK_MPI::getRank());
             string fine_file_name = fine_hier_dump_dirname + "/" + "hier_data.";
             fine_file_name += temp_buf;
 
-            for (int rank = 0; rank < tbox::SAMRAI_MPI::getNodes(); ++rank)
+            for (int rank = 0; rank < IBTK_MPI::getNodes(); ++rank)
             {
-                if (rank == tbox::SAMRAI_MPI::getRank())
+                if (rank == IBTK_MPI::getRank())
                 {
                     fstream coarse_fin, fine_fin;
                     coarse_fin.open(coarse_file_name.c_str(), ios::in);
@@ -186,7 +187,7 @@ main(int argc, char* argv[])
                     coarse_fin.close();
                     fine_fin.close();
                 }
-                tbox::SAMRAI_MPI::barrier();
+                IBTK_MPI::barrier();
             }
 
             if (!files_exist) break;

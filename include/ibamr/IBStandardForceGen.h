@@ -19,6 +19,7 @@
 #include "ibamr/IBLagrangianForceStrategy.h"
 #include "ibamr/IBSpringForceFunctions.h"
 
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/ibtk_utilities.h"
 
 #include "tbox/Database.h"

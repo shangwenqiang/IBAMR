@@ -65,8 +65,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown
@@ -227,7 +227,7 @@ main(int argc, char* argv[])
 
         // Streams to write-out data.
         std::ofstream C_D_stream, C_L_stream;
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             C_D_stream.open("C_D.curve", ios_base::out | ios_base::trunc);
             C_L_stream.open("C_L.curve", ios_base::out | ios_base::trunc);
@@ -283,7 +283,7 @@ main(int argc, char* argv[])
         }
 
         // Close the logging streams.
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             C_D_stream.close();
             C_L_stream.close();
@@ -320,8 +320,8 @@ postprocess_data(Pointer<PatchHierarchy<NDIM> > patch_hierarchy,
             F[d] += F_arr[k][d];
         }
     }
-    SAMRAI_MPI::sumReduction(F, NDIM);
-    if (SAMRAI_MPI::getRank() == 0)
+    IBTK_MPI::sumReduction(F, NDIM);
+    if (IBTK_MPI::getRank() == 0)
     {
         C_D_stream.precision(12);
         C_D_stream.setf(ios::fixed, ios::floatfield);

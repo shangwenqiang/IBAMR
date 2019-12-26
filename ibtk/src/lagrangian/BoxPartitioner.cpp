@@ -13,11 +13,11 @@
 
 /////////////////////////////// INCLUDES /////////////////////////////////////
 #include <ibtk/BoxPartitioner.h>
+#include <ibtk/IBTK_MPI.h>
 #include <ibtk/PartitioningBox.h>
 #include <ibtk/namespaces.h> // IWYU pragma: keep
 
 #include <tbox/PIO.h>
-#include <tbox/SAMRAI_MPI.h>
 
 #include <libmesh/elem.h>
 #include <libmesh/mesh_base.h>
@@ -71,7 +71,7 @@ BoxPartitioner::writePartitioning(const std::string& file_name) const
 {
     std::stringstream current_processor_output;
 
-    const int current_rank = SAMRAI_MPI::getRank();
+    const int current_rank = IBTK_MPI::getRank();
     for (const PartitioningBox& box : d_partitioning_boxes)
     {
         const Point bottom = box.bottom();
@@ -107,7 +107,7 @@ BoxPartitioner::writePartitioning(const std::string& file_name) const
     {
         std::remove(file_name.c_str());
     }
-    const int n_processes = SAMRAI_MPI::getNodes();
+    const int n_processes = IBTK_MPI::getNodes();
     for (int rank = 0; rank < n_processes; ++rank)
     {
         if (rank == current_rank)
@@ -119,7 +119,7 @@ BoxPartitioner::writePartitioning(const std::string& file_name) const
             }
             out << current_processor_output.rdbuf();
         }
-        SAMRAI_MPI::barrier();
+        IBTK_MPI::barrier();
     }
 } // writePartitioning
 
@@ -134,7 +134,7 @@ BoxPartitioner::_do_partition(MeshBase& mesh, const unsigned int n)
     TBOX_ASSERT(mesh.is_replicated());
 #endif
     // only implemented when we use SAMRAI's partitioning
-    TBOX_ASSERT(n == static_cast<unsigned int>(SAMRAI_MPI::getNodes()));
+    TBOX_ASSERT(n == static_cast<unsigned int>(IBTK_MPI::getNodes()));
 
     // convert the libMesh type to an MPI type
     MPI_Datatype pid_integral_type = 0;
@@ -154,7 +154,7 @@ BoxPartitioner::_do_partition(MeshBase& mesh, const unsigned int n)
         break;
     }
 
-    const int current_rank = SAMRAI_MPI::getRank();
+    const int current_rank = IBTK_MPI::getRank();
     auto to_ibtk_point = [](const libMesh::Point& p) -> IBTK::Point {
         IBTK::Point point;
         for (unsigned int d = 0; d < NDIM; ++d) point[d] = p(d);
@@ -252,7 +252,7 @@ BoxPartitioner::_do_partition(MeshBase& mesh, const unsigned int n)
     // step 1.5: log the current state of affairs:
     if (d_enable_logging)
     {
-        const int n_processes = SAMRAI_MPI::getNodes();
+        const int n_processes = IBTK_MPI::getNodes();
         std::vector<unsigned long> nodes_on_processors(n_processes);
         nodes_on_processors[current_rank] = n_local_nodes;
         const int ierr = MPI_Allreduce(MPI_IN_PLACE,
@@ -260,7 +260,7 @@ BoxPartitioner::_do_partition(MeshBase& mesh, const unsigned int n)
                                        nodes_on_processors.size(),
                                        MPI_UNSIGNED_LONG,
                                        MPI_SUM,
-                                       SAMRAI_MPI::commWorld);
+                                       IBTK_MPI::getCommunicator());
         TBOX_ASSERT(ierr == 0);
         if (current_rank == 0)
         {
@@ -273,10 +273,10 @@ BoxPartitioner::_do_partition(MeshBase& mesh, const unsigned int n)
 
     // step 2: communicate the partitioning across all processors:
     int ierr = MPI_Allreduce(
-        MPI_IN_PLACE, elem_ids.data(), elem_ids.size(), pid_integral_type, MPI_SUM, SAMRAI_MPI::commWorld);
+        MPI_IN_PLACE, elem_ids.data(), elem_ids.size(), pid_integral_type, MPI_SUM, IBTK_MPI::getCommunicator());
     TBOX_ASSERT(ierr == 0);
     ierr = MPI_Allreduce(
-        MPI_IN_PLACE, node_ids.data(), node_ids.size(), pid_integral_type, MPI_SUM, SAMRAI_MPI::commWorld);
+        MPI_IN_PLACE, node_ids.data(), node_ids.size(), pid_integral_type, MPI_SUM, IBTK_MPI::getCommunicator());
     TBOX_ASSERT(ierr == 0);
 
     // step 3: verify that we partitioned each elem and node exactly once:

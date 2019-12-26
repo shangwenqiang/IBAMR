@@ -130,8 +130,8 @@ main(int argc, char** argv)
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     PetscOptionsSetValue(nullptr, "-ksp_rtol", "1e-16");
@@ -525,8 +525,8 @@ main(int argc, char** argv)
                     J_integral += abs(FF.det()) * JxW[qp];
                 }
             }
-            J_integral = SAMRAI_MPI::sumReduction(J_integral);
-            if (SAMRAI_MPI::getRank() == 0)
+            J_integral = IBTK_MPI::sumReduction(J_integral);
+            if (IBTK_MPI::getRank() == 0)
             {
                 plog << std::setprecision(12) << std::fixed << loop_time << " " << J_integral << std::endl;
             }

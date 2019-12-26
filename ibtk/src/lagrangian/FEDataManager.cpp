@@ -16,6 +16,7 @@
 #include "ibtk/FECache.h"
 #include "ibtk/FEDataManager.h"
 #include "ibtk/IBTK_CHKERRQ.h"
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/IndexUtilities.h"
 #include "ibtk/JacobianCalculatorCache.h"
 #include "ibtk/LEInteractor.h"
@@ -64,7 +65,6 @@
 #include "tbox/PIO.h"
 #include "tbox/Pointer.h"
 #include "tbox/RestartManager.h"
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/ShutdownRegistry.h"
 #include "tbox/Timer.h"
 #include "tbox/TimerManager.h"
@@ -2866,8 +2866,8 @@ FEDataManager::updateQuadPointCountData(const int coarsest_ln, const int finest_
 
         if (d_enable_logging)
         {
-            const int n_processes = SAMRAI::tbox::SAMRAI_MPI::getNodes();
-            const int current_rank = SAMRAI::tbox::SAMRAI_MPI::getRank();
+            const int n_processes = IBTK_MPI::getNodes();
+            const int current_rank = IBTK_MPI::getRank();
             const auto right_padding = std::size_t(std::log10(n_processes)) + 1;
 
             std::vector<unsigned long> n_q_points_on_processors(n_processes);
@@ -2878,7 +2878,7 @@ FEDataManager::updateQuadPointCountData(const int coarsest_ln, const int finest_
                                            n_q_points_on_processors.size(),
                                            MPI_UNSIGNED_LONG,
                                            MPI_SUM,
-                                           SAMRAI::tbox::SAMRAI_MPI::commWorld);
+                                           IBTK_MPI::getCommunicator());
             TBOX_ASSERT(ierr == 0);
             if (current_rank == 0)
             {
@@ -3096,7 +3096,7 @@ FEDataManager::collectActivePatchElements(std::vector<std::vector<Elem*> >& acti
         }
 
         // Check to see if we are done.
-        done = SAMRAI_MPI::sumReduction(new_frontier ? 1 : 0) == 0;
+        done = IBTK_MPI::sumReduction(new_frontier ? 1 : 0) == 0;
     }
 
     // Set the active patch element data.

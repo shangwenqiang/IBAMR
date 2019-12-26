@@ -110,8 +110,8 @@ main(int argc, char* argv[])
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // Increase maximum patch data component indices
@@ -557,7 +557,7 @@ main(int argc, char* argv[])
 
         // File to write to for fluid mass data
         ofstream mass_file;
-        if (!SAMRAI_MPI::getRank()) mass_file.open("mass_fluid.txt");
+        if (!IBTK_MPI::getRank()) mass_file.open("mass_fluid.txt");
         // Main time step loop.
         double loop_time_end = time_integrator->getEndTime();
         double dt = 0.0;
@@ -609,7 +609,7 @@ main(int argc, char* argv[])
             const double mass_fluid = hier_rho_data_ops.integral(rho_ins_idx, wgt_sc_idx);
 
             // Write to file
-            if (!SAMRAI_MPI::getRank())
+            if (!IBTK_MPI::getRank())
             {
                 mass_file << std::setprecision(13) << loop_time << "\t" << mass_fluid << std::endl;
             }
@@ -646,7 +646,7 @@ main(int argc, char* argv[])
         }
 
         // Close file
-        if (!SAMRAI_MPI::getRank()) mass_file.close();
+        if (!IBTK_MPI::getRank()) mass_file.close();
 
         // Cleanup Eulerian boundary condition specification objects (when
         // necessary).

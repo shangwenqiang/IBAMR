@@ -11,10 +11,10 @@
 //
 // ---------------------------------------------------------------------
 
+#include <ibtk/IBTK_MPI.h>
 #include <ibtk/libmesh_utilities.h>
 
 #include <tbox/SAMRAIManager.h>
-#include <tbox/SAMRAI_MPI.h>
 
 #include <libmesh/enum_order.h>
 #include <libmesh/enum_quadrature_type.h>
@@ -176,8 +176,8 @@ main(int argc, char** argv)
     LibMeshInit init(argc, argv);
     std::ofstream out("output");
 
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // test 2D

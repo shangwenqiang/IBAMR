@@ -22,6 +22,7 @@
 
 #include "ibtk/HierarchyGhostCellInterpolation.h"
 #include "ibtk/IndexUtilities.h"
+#include <ibtk/IBTK_MPI.h>
 
 #include "Box.h"
 #include "CartesianGridGeometry.h"
@@ -32,7 +33,6 @@
 #include "RobinBcCoefStrategy.h"
 #include "SAMRAI_config.h"
 #include "tbox/Pointer.h"
-#include <tbox/SAMRAI_MPI.h>
 
 #include <Patch.h>
 #include <PatchLevel.h>

@@ -15,6 +15,7 @@
 
 #include "ibtk/CCPoissonHypreLevelSolver.h"
 #include "ibtk/GeneralSolver.h"
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/PoissonUtilities.h"
 #include "ibtk/ibtk_macros.h"
 #include "ibtk/ibtk_utilities.h"
@@ -43,7 +44,6 @@
 #include "tbox/Database.h"
 #include "tbox/PIO.h"
 #include "tbox/Pointer.h"
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Timer.h"
 #include "tbox/TimerManager.h"
 #include "tbox/Utilities.h"
@@ -357,7 +357,7 @@ void
 CCPoissonHypreLevelSolver::allocateHypreData()
 {
     // Get the MPI communicator.
-    MPI_Comm communicator = SAMRAI_MPI::getCommunicator();
+    MPI_Comm communicator = IBTK_MPI::getCommunicator();
 
     // Setup the hypre grid.
     Pointer<CartesianGridGeometry<NDIM> > grid_geometry = d_hierarchy->getGridGeometry();
@@ -726,7 +726,7 @@ void
 CCPoissonHypreLevelSolver::setupHypreSolver()
 {
     // Get the MPI communicator.
-    MPI_Comm communicator = SAMRAI_MPI::getCommunicator();
+    MPI_Comm communicator = IBTK_MPI::getCommunicator();
 
     d_solvers.resize(d_depth);
     d_preconds.resize(d_depth);

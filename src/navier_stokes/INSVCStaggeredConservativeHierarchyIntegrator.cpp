@@ -47,6 +47,7 @@
 #include "ibtk/HierarchyGhostCellInterpolation.h"
 #include "ibtk/HierarchyIntegrator.h"
 #include "ibtk/HierarchyMathOps.h"
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/KrylovLinearSolver.h"
 #include "ibtk/LinearSolver.h"
 #include "ibtk/NewtonKrylovSolver.h"
@@ -114,7 +115,6 @@
 #include "tbox/MemoryDatabase.h"
 #include "tbox/PIO.h"
 #include "tbox/Pointer.h"
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Utilities.h"
 
 #include <algorithm>

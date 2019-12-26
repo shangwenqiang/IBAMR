@@ -81,8 +81,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // Increase maximum patch data component indices
@@ -491,7 +491,7 @@ main(int argc, char* argv[])
 
         // File to write to for fluid mass data
         ofstream mass_file;
-        if (!SAMRAI_MPI::getRank())
+        if (!IBTK_MPI::getRank())
         {
             if (is_from_restart)
                 mass_file.open("mass_fluid.txt", std::fstream::app);
@@ -546,7 +546,7 @@ main(int argc, char* argv[])
             const double mass_fluid = hier_sc_data_ops.integral(rho_ins_idx, wgt_sc_idx);
 
             // Write to file
-            if (!SAMRAI_MPI::getRank())
+            if (!IBTK_MPI::getRank())
             {
                 mass_file << std::setprecision(13) << loop_time << '\t' << mass_fluid << std::endl;
             }
@@ -585,7 +585,7 @@ main(int argc, char* argv[])
         }
 
         // Close files
-        if (!SAMRAI_MPI::getRank()) mass_file.close();
+        if (!IBTK_MPI::getRank()) mass_file.close();
 
         // Cleanup Eulerian boundary condition specification objects (when
         // necessary).
@@ -619,7 +619,7 @@ output_data(Pointer<PatchHierarchy<NDIM> > patch_hierarchy,
     // Write Cartesian data.
     string file_name = data_dump_dirname + "/" + "hier_data.";
     char temp_buf[128];
-    sprintf(temp_buf, "%05d.samrai.%05d", iteration_num, SAMRAI_MPI::getRank());
+    sprintf(temp_buf, "%05d.samrai.%05d", iteration_num, IBTK_MPI::getRank());
     file_name += temp_buf;
     Pointer<HDFDatabase> hier_db = new HDFDatabase("hier_db");
     hier_db->create(file_name);

@@ -16,10 +16,10 @@
 #include "ibamr/IBSpringForceSpec.h"
 #include "ibamr/namespaces.h" // IWYU pragma: keep
 
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/StreamableFactory.h"
 #include "ibtk/StreamableManager.h"
 
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Utilities.h"
 
 #include <ostream>
@@ -38,7 +38,7 @@ IBSpringForceSpec::registerWithStreamableManager()
     // We place MPI barriers here to ensure that all MPI processes actually
     // register the factory class with the StreamableManager, and to ensure that
     // all processes employ the same class ID for the IBSpringForceSpec object.
-    SAMRAI_MPI::barrier();
+    IBTK_MPI::barrier();
     if (!getIsRegisteredWithStreamableManager())
     {
 #if !defined(NDEBUG)
@@ -46,7 +46,7 @@ IBSpringForceSpec::registerWithStreamableManager()
 #endif
         STREAMABLE_CLASS_ID = StreamableManager::getManager()->registerFactory(new IBSpringForceSpecFactory());
     }
-    SAMRAI_MPI::barrier();
+    IBTK_MPI::barrier();
     return;
 } // registerWithStreamableManager
 

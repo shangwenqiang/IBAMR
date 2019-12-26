@@ -213,8 +213,8 @@ main(int argc, char* argv[])
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     pout << std::setprecision(10);
@@ -722,11 +722,11 @@ postprocess_data(Pointer<Database> input_db,
             }
         }
     }
-    SAMRAI_MPI::sumReduction(F_integral, NDIM);
+    IBTK_MPI::sumReduction(F_integral, NDIM);
     static const double rho = 1.0;
     static const double U_max = 1.0;
     static const double D = 1.0;
-    if (SAMRAI_MPI::getRank() == 0)
+    if (IBTK_MPI::getRank() == 0)
     {
         pout << loop_time << " " << -F_integral[0] / (0.5 * rho * U_max * U_max * D) << endl;
         // This computed value is not stable between debug and optimized mode

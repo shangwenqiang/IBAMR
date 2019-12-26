@@ -146,8 +146,8 @@ main(int argc, char* argv[])
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::setMaxNumberPatchDataEntries(512);
     SAMRAIManager::startup();
 
@@ -472,7 +472,7 @@ main(int argc, char* argv[])
 
         // Open streams to save lift and drag coefficients and the norms of the
         // velocity.
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             drag_force_stream.open("CD_Force_integral.curve", ios_base::out | ios_base::trunc);
             drag_force_stream.precision(10);
@@ -541,7 +541,7 @@ main(int argc, char* argv[])
         }
 
         // Close the logging streams.
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             drag_force_stream.close();
             sxx_component_stream.close();

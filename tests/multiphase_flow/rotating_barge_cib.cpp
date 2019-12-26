@@ -72,8 +72,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // Several parts of the code (such as LDataManager) expect mesh files,
@@ -82,7 +82,7 @@ main(int argc, char* argv[])
     // regenerate these input files first.
     //
     // The following is simply the bargeGen executable:
-    if (SAMRAI_MPI::getRank() == 0)
+    if (IBTK_MPI::getRank() == 0)
     {
         const double Lx = 5.0;
         const double Ly = 2.5;
@@ -471,7 +471,7 @@ main(int argc, char* argv[])
 
         // File to write for barge angle.
         ofstream output_file;
-        if (!SAMRAI_MPI::getRank()) output_file.open("output");
+        if (!IBTK_MPI::getRank()) output_file.open("output");
         // Main time step loop.
         double loop_time_end = time_integrator->getEndTime();
         double dt = 0.0;
@@ -505,7 +505,7 @@ main(int argc, char* argv[])
             pout << "\n";
 
             // Write to file
-            if (!SAMRAI_MPI::getRank())
+            if (!IBTK_MPI::getRank())
             {
                 output_file << std::setprecision(10) << loop_time << '\t' << barge.theta << std::endl;
             }
@@ -517,7 +517,7 @@ main(int argc, char* argv[])
         }
 
         // Close file
-        if (!SAMRAI_MPI::getRank()) output_file.close();
+        if (!IBTK_MPI::getRank()) output_file.close();
 
         // Cleanup Eulerian boundary condition specification objects (when
         // necessary).

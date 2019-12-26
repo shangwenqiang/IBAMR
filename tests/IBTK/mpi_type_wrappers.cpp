@@ -19,7 +19,6 @@
 #include <ibtk/IBTK_MPI.h>
 
 #include <tbox/SAMRAIManager.h>
-#include <tbox/SAMRAI_MPI.h>
 
 #include <SAMRAI_config.h>
 
@@ -73,8 +72,8 @@ int
 main(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
-    SAMRAI_MPI::setCommunicator(MPI_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(MPI_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     Pointer<AppInitializer> app_initializer = new AppInitializer(argc, argv, "IB.log");

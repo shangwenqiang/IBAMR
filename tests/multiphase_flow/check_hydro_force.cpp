@@ -119,8 +119,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     // Increase maximum patch data component indices
@@ -421,7 +421,7 @@ main(int argc, char* argv[])
         force_evaluator.computeHydrodynamicForceTorque(
             pressure_force, viscous_force, pressure_torque, viscous_torque, circle.X0);
 
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             std::ofstream out("output");
             out << "Vertical pressure force analytical = " << M_PI * circle.R * circle.R << std::endl;

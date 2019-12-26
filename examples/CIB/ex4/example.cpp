@@ -111,8 +111,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
     SAMRAIManager::setMaxNumberPatchDataEntries(2054);
 
@@ -323,7 +323,7 @@ main(int argc, char* argv[])
                         postproc_data_dump_dirname);
         }
 
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             U_stream.open("./Lambda/U.txt", std::ios_base::out | ios_base::trunc);
             U_stream.precision(10);
@@ -405,7 +405,7 @@ main(int argc, char* argv[])
             }
         }
 
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             U_stream.close();
         }

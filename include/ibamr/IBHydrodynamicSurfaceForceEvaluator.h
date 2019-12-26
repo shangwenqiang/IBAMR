@@ -14,6 +14,7 @@
 #ifndef included_IBHydrodynamicSurfaceForceEvaluator
 #define included_IBHydrodynamicSurfaceForceEvaluator
 
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/ibtk_macros.h"
 #include "ibtk/ibtk_utilities.h"
 

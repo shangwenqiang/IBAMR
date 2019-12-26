@@ -1312,7 +1312,7 @@ IBStandardForceGen::computeLagrangianTargetPointForce(Pointer<LData> F_data,
 
     if (d_log_target_point_displacements)
     {
-        max_displacement = SAMRAI_MPI::maxReduction(max_displacement);
+        max_displacement = IBTK_MPI::maxReduction(max_displacement);
         plog << "IBStandardForceGen: maximum target point displacement: " << max_displacement << "\n";
     }
 

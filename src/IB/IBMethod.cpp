@@ -25,6 +25,7 @@
 
 #include "ibtk/HierarchyMathOps.h"
 #include "ibtk/IBTK_CHKERRQ.h"
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/IndexUtilities.h"
 #include "ibtk/LData.h"
 #include "ibtk/LDataManager.h"
@@ -65,7 +66,6 @@
 #include "tbox/PIO.h"
 #include "tbox/Pointer.h"
 #include "tbox/RestartManager.h"
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Utilities.h"
 
 #include "petscmat.h"
@@ -1242,8 +1242,8 @@ IBMethod::interpolatePressure(int p_data_idx,
                 }
             }
         }
-        SAMRAI_MPI::sumReduction(&p_norm, 1);
-        SAMRAI_MPI::sumReduction(&vol, 1);
+        IBTK_MPI::sumReduction(&p_norm, 1);
+        IBTK_MPI::sumReduction(&vol, 1);
         p_norm /= vol;
     }
 
@@ -1302,7 +1302,7 @@ IBMethod::interpolatePressure(int p_data_idx,
                 }
             }
         }
-        SAMRAI_MPI::sumReduction(&d_P_src[ln][0], static_cast<int>(d_P_src[ln].size()));
+        IBTK_MPI::sumReduction(&d_P_src[ln][0], static_cast<int>(d_P_src[ln].size()));
         std::transform(
             d_P_src[ln].begin(), d_P_src[ln].end(), d_P_src[ln].begin(), std::bind2nd(std::plus<double>(), -p_norm));
 

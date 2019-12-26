@@ -212,8 +212,8 @@ main(int argc, char* argv[])
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown
@@ -530,7 +530,7 @@ main(int argc, char* argv[])
 
         // Open streams to save lift and drag coefficients and the norms of the
         // velocity.
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             drag_stream.open("C_D.curve", ios_base::out | ios_base::trunc);
             lift_stream.open("C_L.curve", ios_base::out | ios_base::trunc);
@@ -620,7 +620,7 @@ main(int argc, char* argv[])
         }
 
         // Close the logging streams.
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             drag_stream.close();
             lift_stream.close();
@@ -748,11 +748,11 @@ postprocess_data(Pointer<Database> input_db,
             }
         }
     }
-    SAMRAI_MPI::sumReduction(F_integral, NDIM);
+    IBTK_MPI::sumReduction(F_integral, NDIM);
     static const double rho = 1.0;
     static const double U_max = 1.0;
     static const double D = 1.0;
-    if (SAMRAI_MPI::getRank() == 0)
+    if (IBTK_MPI::getRank() == 0)
     {
         drag_stream << loop_time << " " << -F_integral[0] / (0.5 * rho * U_max * U_max * D) << endl;
         lift_stream << loop_time << " " << -F_integral[1] / (0.5 * rho * U_max * U_max * D) << endl;

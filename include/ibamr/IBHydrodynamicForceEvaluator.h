@@ -14,6 +14,7 @@
 #ifndef included_IBHydrodynamicForceEvaluator
 #define included_IBHydrodynamicForceEvaluator
 
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/ibtk_macros.h"
 #include <ibtk/LData.h>
 #include <ibtk/LDataManager.h>

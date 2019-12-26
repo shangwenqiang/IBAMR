@@ -137,8 +137,8 @@ main(int argc, char** argv)
 {
     // Initialize libMesh, PETSc, MPI, and SAMRAI.
     LibMeshInit init(argc, argv);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     PetscOptionsSetValue(nullptr, "-ksp_rtol", "1e-16");
@@ -372,7 +372,7 @@ main(int argc, char** argv)
                 }
             }
 
-            plog << "max vertex distance: " << SAMRAI_MPI::maxReduction(max_vertex_distance) << std::endl;
+            plog << "max vertex distance: " << IBTK_MPI::maxReduction(max_vertex_distance) << std::endl;
             plog << "max norm errors: ";
             for (unsigned int i = 0; i < n_vars - 1; ++i)
             {

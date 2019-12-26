@@ -277,7 +277,7 @@ LSLocateStructureInterface::getMinimumWedgeCoord(Pointer<HierarchyMathOps> hier_
 
         X_data[ln]->restoreArrays();
     } // all levels
-    wedge_min = SAMRAI_MPI::minReduction(wedge_min);
+    wedge_min = IBTK_MPI::minReduction(wedge_min);
 
     return wedge_min;
 } // getMinimumWedgeCoord

@@ -20,6 +20,7 @@
 #include "ibtk/CCLaplaceOperator.h"
 #include "ibtk/CCPoissonPointRelaxationFACOperator.h"
 #include "ibtk/FACPreconditioner.h"
+#include "ibtk/IBTK_MPI.h"
 #include "ibtk/IndexUtilities.h"
 #include "ibtk/LNodeSetData.h"
 #include "ibtk/PETScKrylovLinearSolver.h"
@@ -31,7 +32,6 @@
 #include "HierarchyDataOpsManager.h"
 #include "PatchHierarchy.h"
 #include "VariableDatabase.h"
-#include "tbox/SAMRAI_MPI.h"
 #include "tbox/Timer.h"
 #include "tbox/TimerManager.h"
 #include "tbox/Utilities.h"
@@ -248,7 +248,7 @@ ConstraintIBMethod::ConstraintIBMethod(std::string object_name,
     }
 
     // Do printing operation for processor 0 only.
-    if (!SAMRAI_MPI::getRank() && d_print_output)
+    if (!IBTK_MPI::getRank() && d_print_output)
     {
         d_trans_vel_stream.resize(d_no_structures);
         d_rot_vel_stream.resize(d_no_structures);
@@ -485,7 +485,7 @@ ConstraintIBMethod::calculateEulerianMomentum()
         wgt_sc_active->freeVectorComponents();
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_eul_mom && (d_timestep_counter % d_output_interval) == 0)
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_eul_mom && (d_timestep_counter % d_output_interval) == 0)
     {
         d_eulerian_mom_stream << d_FuRMoRP_new_time << '\t' << momentum[0] << '\t' << momentum[1] << '\t' << momentum[2]
                               << '\t' << std::endl;
@@ -928,9 +928,8 @@ ConstraintIBMethod::calculateCOMandMOIOfStructures()
         const StructureParameters& struct_param = d_ib_kinematics[struct_no]->getStructureParameters();
         const int total_nodes = struct_param.getTotalNodes();
 
-        SAMRAI_MPI::sumReduction(d_center_of_mass_current[struct_no].data(),
-                                 d_center_of_mass_current[struct_no].size());
-        SAMRAI_MPI::sumReduction(d_center_of_mass_new[struct_no].data(), d_center_of_mass_new[struct_no].size());
+        IBTK_MPI::sumReduction(d_center_of_mass_current[struct_no].data(), d_center_of_mass_current[struct_no].size());
+        IBTK_MPI::sumReduction(d_center_of_mass_new[struct_no].data(), d_center_of_mass_new[struct_no].size());
 
         for (int i = 0; i < 3; ++i)
         {
@@ -941,7 +940,7 @@ ConstraintIBMethod::calculateCOMandMOIOfStructures()
 
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
-        SAMRAI_MPI::sumReduction(&tagged_position[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&tagged_position[struct_no][0], 3);
         d_tagged_pt_position[struct_no] = tagged_position[struct_no];
     }
 
@@ -1048,8 +1047,8 @@ ConstraintIBMethod::calculateCOMandMOIOfStructures()
         const StructureParameters& struct_param = d_ib_kinematics[struct_no]->getStructureParameters();
         if (struct_param.getStructureIsSelfRotating())
         {
-            SAMRAI_MPI::sumReduction(&d_moment_of_inertia_current[struct_no](0, 0), 9);
-            SAMRAI_MPI::sumReduction(&d_moment_of_inertia_new[struct_no](0, 0), 9);
+            IBTK_MPI::sumReduction(&d_moment_of_inertia_current[struct_no](0, 0), 9);
+            IBTK_MPI::sumReduction(&d_moment_of_inertia_new[struct_no](0, 0), 9);
         }
     }
 
@@ -1066,7 +1065,7 @@ ConstraintIBMethod::calculateCOMandMOIOfStructures()
     }
 
     // write the COM and MOI to the output file
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_COM_coordinates &&
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_COM_coordinates &&
         (d_timestep_counter % d_output_interval) == 0 && !MathUtilities<double>::equalEps(d_FuRMoRP_current_time, 0.0))
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
@@ -1078,7 +1077,7 @@ ConstraintIBMethod::calculateCOMandMOIOfStructures()
         }
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_MOI && (d_timestep_counter % d_output_interval) == 0 &&
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_MOI && (d_timestep_counter % d_output_interval) == 0 &&
         !MathUtilities<double>::equalEps(d_FuRMoRP_current_time, 0.0))
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
@@ -1173,7 +1172,7 @@ ConstraintIBMethod::calculateMomentumOfKinematicsVelocity(const int position_han
             d_vel_com_def_new[position_handle][d] += U_com_def[d];
         }
     }
-    SAMRAI_MPI::sumReduction(d_vel_com_def_new[position_handle].data(), d_vel_com_def_new[position_handle].size());
+    IBTK_MPI::sumReduction(d_vel_com_def_new[position_handle].data(), d_vel_com_def_new[position_handle].size());
 
     for (int d = 0; d < 3; ++d)
     {
@@ -1249,7 +1248,7 @@ ConstraintIBMethod::calculateMomentumOfKinematicsVelocity(const int position_han
             }
             ptr_x_lag_data->restoreArrays();
         } // all levels
-        SAMRAI_MPI::sumReduction(&d_omega_com_def_new[position_handle][0], 3);
+        IBTK_MPI::sumReduction(&d_omega_com_def_new[position_handle][0], 3);
 
 // Find angular velocity of deformational velocity.
 #if (NDIM == 2)
@@ -1366,7 +1365,7 @@ ConstraintIBMethod::calculateVolumeElement()
         }     // all structs
         d_l_data_manager->getLData("X", ln)->restoreArrays();
     } // all levels
-    SAMRAI_MPI::sumReduction(&d_structure_vol[0], d_no_structures);
+    IBTK_MPI::sumReduction(&d_structure_vol[0], d_no_structures);
 
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
@@ -1476,7 +1475,7 @@ ConstraintIBMethod::calculateRigidTranslationalMomentum()
         const StructureParameters& struct_param = d_ib_kinematics[struct_no]->getStructureParameters();
         if (struct_param.getStructureIsSelfTranslating())
         {
-            SAMRAI_MPI::sumReduction(d_rigid_trans_vel_new[struct_no].data(), d_rigid_trans_vel_new[struct_no].size());
+            IBTK_MPI::sumReduction(d_rigid_trans_vel_new[struct_no].data(), d_rigid_trans_vel_new[struct_no].size());
             Array<int> calculate_trans_mom = struct_param.getCalculateTranslationalMomentum();
             for (int d = 0; d < NDIM; ++d)
             {
@@ -1488,7 +1487,7 @@ ConstraintIBMethod::calculateRigidTranslationalMomentum()
         }
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_trans_vel && (d_timestep_counter % d_output_interval) == 0)
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_trans_vel && (d_timestep_counter % d_output_interval) == 0)
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
         {
@@ -1580,7 +1579,7 @@ ConstraintIBMethod::calculateRigidRotationalMomentum()
         const StructureParameters& struct_param = d_ib_kinematics[struct_no]->getStructureParameters();
         if (struct_param.getStructureIsSelfRotating())
         {
-            SAMRAI_MPI::sumReduction(&d_rigid_rot_vel_new[struct_no][0], 3);
+            IBTK_MPI::sumReduction(&d_rigid_rot_vel_new[struct_no][0], 3);
 #if (NDIM == 2)
             d_rigid_rot_vel_new[struct_no][2] /= d_moment_of_inertia_new[struct_no](2, 2);
 #endif
@@ -1596,7 +1595,7 @@ ConstraintIBMethod::calculateRigidRotationalMomentum()
         }
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_rot_vel && (d_timestep_counter % d_output_interval) == 0)
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_rot_vel && (d_timestep_counter % d_output_interval) == 0)
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
         {
@@ -2422,8 +2421,8 @@ ConstraintIBMethod::calculateDrag()
 
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
-        SAMRAI_MPI::sumReduction(&inertia_force[struct_no][0], 3);
-        SAMRAI_MPI::sumReduction(&constraint_force[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&inertia_force[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&constraint_force[struct_no][0], 3);
         for (int d = 0; d < NDIM; ++d)
         {
             inertia_force[struct_no][d] *= (d_rho_solid[struct_no] / dt) * d_vol_element[struct_no];
@@ -2431,7 +2430,7 @@ ConstraintIBMethod::calculateDrag()
         }
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_drag && (d_timestep_counter % d_output_interval) == 0)
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_drag && (d_timestep_counter % d_output_interval) == 0)
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
         {
@@ -2532,8 +2531,8 @@ ConstraintIBMethod::calculateTorque()
     }
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
-        SAMRAI_MPI::sumReduction(&inertia_torque[struct_no][0], 3);
-        SAMRAI_MPI::sumReduction(&constraint_torque[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&inertia_torque[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&constraint_torque[struct_no][0], 3);
         for (int d = 0; d < 3; ++d)
         {
             inertia_torque[struct_no][d] *= (d_rho_solid[struct_no] / dt) * d_vol_element[struct_no];
@@ -2541,7 +2540,7 @@ ConstraintIBMethod::calculateTorque()
         }
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_torque && (d_timestep_counter % d_output_interval) == 0)
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_torque && (d_timestep_counter % d_output_interval) == 0)
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
         {
@@ -2614,8 +2613,8 @@ ConstraintIBMethod::calculatePower()
 
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
-        SAMRAI_MPI::sumReduction(&inertia_power[struct_no][0], 3);
-        SAMRAI_MPI::sumReduction(&constraint_power[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&inertia_power[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&constraint_power[struct_no][0], 3);
         for (int d = 0; d < NDIM; ++d)
         {
             inertia_power[struct_no][d] *= (d_rho_solid[struct_no] / dt) * d_vol_element[struct_no];
@@ -2623,7 +2622,7 @@ ConstraintIBMethod::calculatePower()
         }
     }
 
-    if (!SAMRAI_MPI::getRank() && d_print_output && d_output_drag && (d_timestep_counter % d_output_interval) == 0)
+    if (!IBTK_MPI::getRank() && d_print_output && d_output_drag && (d_timestep_counter % d_output_interval) == 0)
     {
         for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
         {
@@ -2684,7 +2683,7 @@ ConstraintIBMethod::calculateStructureMomentum()
 
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
-        SAMRAI_MPI::sumReduction(&d_structure_mom[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&d_structure_mom[struct_no][0], 3);
         for (int d = 0; d < NDIM; ++d)
         {
             d_structure_mom[struct_no][d] *= d_rho_solid[struct_no] * d_vol_element[struct_no];
@@ -2763,7 +2762,7 @@ ConstraintIBMethod::calculateStructureRotationalMomentum()
     }
     for (int struct_no = 0; struct_no < d_no_structures; ++struct_no)
     {
-        SAMRAI_MPI::sumReduction(&d_structure_rotational_mom[struct_no][0], 3);
+        IBTK_MPI::sumReduction(&d_structure_rotational_mom[struct_no][0], 3);
         for (int d = 0; d < 3; ++d)
         {
             d_structure_rotational_mom[struct_no][d] *= d_rho_solid[struct_no] * d_vol_element[struct_no];

@@ -42,8 +42,8 @@ main(int argc, char* argv[])
 {
     // Initialize PETSc, MPI, and SAMRAI.
     PetscInitialize(&argc, &argv, NULL, NULL);
-    SAMRAI_MPI::setCommunicator(PETSC_COMM_WORLD);
-    SAMRAI_MPI::setCallAbortInSerialInsteadOfExit();
+    IBTK_MPI::setCommunicator(PETSC_COMM_WORLD);
+    IBTK_MPI::setCallAbortInSerialInsteadOfExit();
     SAMRAIManager::startup();
 
     { // cleanup dynamically allocated objects prior to shutdown
@@ -262,7 +262,7 @@ main(int argc, char* argv[])
         const double l1_norm = hier_cc_data_ops.L1Norm(U_idx, wgt_cc_idx);
         const double l2_norm = hier_cc_data_ops.L2Norm(U_idx, wgt_cc_idx);
         const double max_norm = hier_cc_data_ops.maxNorm(U_idx, wgt_cc_idx);
-        if (SAMRAI_MPI::getRank() == 0)
+        if (IBTK_MPI::getRank() == 0)
         {
             std::ofstream out("output");
             out << "Error in U at time " << loop_time << ":\n"

@@ -19,6 +19,8 @@
 // IBAMR INCLUDES
 #include "ibamr/IBHierarchyIntegrator.h"
 
+#include "ibtk/IBTK_MPI.h"
+
 namespace IBAMR
 {
 class IBFEMethod;
